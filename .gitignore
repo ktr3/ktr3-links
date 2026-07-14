@@ -3,3 +3,13 @@ node_modules/
 out/
 .env
 .env.local
+.DS_Store
+outputs/
+findings.md
+progress.md
+task_plan.md
+docs/superpowers/plans/
+public/gipuzkoa-underground.png
+*.dump
+*.dump.gz
+*.log

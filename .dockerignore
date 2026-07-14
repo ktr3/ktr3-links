@@ -1,0 +1,16 @@
+.git
+.gitignore
+.next
+node_modules
+outputs
+docs/superpowers/plans
+findings.md
+progress.md
+task_plan.md
+.env
+.env.*
+!.env.example
+*.dump
+*.dump.gz
+*.log
+public/gipuzkoa-underground.png

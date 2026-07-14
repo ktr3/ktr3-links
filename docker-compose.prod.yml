@@ -1,0 +1,67 @@
+services:
+  database:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-ktr3_underground}
+      POSTGRES_USER: ${POSTGRES_USER:-ktr3}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+    volumes:
+      - database_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-ktr3} -d ${POSTGRES_DB:-ktr3_underground}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    networks:
+      - backend
+    restart: unless-stopped
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  web:
+    image: ktr3-links:${APP_VERSION:-latest}
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      NODE_ENV: production
+      HOSTNAME: 0.0.0.0
+      PORT: 3000
+      DATABASE_URL: postgres://${POSTGRES_USER:-ktr3}:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}@database:5432/${POSTGRES_DB:-ktr3_underground}
+      DATABASE_MAX_CONNECTIONS: ${DATABASE_MAX_CONNECTIONS:-5}
+    depends_on:
+      database:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:${LOCAL_HTTP_PORT:-3300}:3000"
+    labels:
+      - traefik.enable=${TRAEFIK_ENABLE:-true}
+      - traefik.http.routers.ktr3links.rule=Host(`ktr3.es`)
+      - traefik.http.routers.ktr3links.entrypoints=websecure
+      - traefik.http.routers.ktr3links.tls.certresolver=letsencrypt
+      - traefik.http.services.ktr3links.loadbalancer.server.port=3000
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+    networks:
+      - backend
+      - easypanel
+    restart: unless-stopped
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  database_data:
+
+networks:
+  backend:
+    internal: true
+  easypanel:
+    external: true
