@@ -1,0 +1,39 @@
+.page {
+  min-height: 100vh;
+  color: #eee9f3;
+  background:
+    radial-gradient(circle at 80% 0, rgba(168,85,247,.17), transparent 28rem),
+    #09070d;
+  font-family: Inter, Arial, sans-serif;
+}
+
+.nav, .document, .footer { width: min(820px, calc(100% - 40px)); margin: auto; }
+.nav { display: flex; align-items: center; justify-content: space-between; padding: 24px 0; border-bottom: 1px solid rgba(255,255,255,.1); }
+.nav a { color: #c8bcd0; text-decoration: none; font-size: 13px; }
+.brand { display: flex; align-items: center; gap: 10px; color: #fff !important; font-weight: 900; letter-spacing: .16em; }
+.brand img { width: 32px; height: 32px; border-radius: 8px; }
+.document { padding: 78px 0 90px; }
+.document header { padding-bottom: 46px; border-bottom: 1px solid rgba(255,255,255,.1); }
+.document header > span { color: #c783ff; font: 700 10px ui-monospace, monospace; letter-spacing: .18em; }
+.document h1 { margin: 15px 0 20px; color: #fff; font-size: clamp(2.8rem, 7vw, 5.5rem); line-height: .95; letter-spacing: -.065em; }
+.document header p { max-width: 680px; color: #aaa0b4; font-size: 17px; line-height: 1.65; }
+.document header small { display: block; margin-top: 20px; color: #6f6776; font: 11px ui-monospace, monospace; }
+.document section { padding-top: 38px; }
+.document h2 { margin-bottom: 14px; color: #f5eefa; font-size: 21px; letter-spacing: -.025em; }
+.document h3 { margin: 24px 0 8px; color: #d9cde1; font-size: 15px; }
+.document p, .document li { color: #aaa0b4; font-size: 14px; line-height: 1.75; }
+.document ul { display: grid; gap: 7px; padding-left: 20px; }
+.document a { color: #d2a0fb; }
+.tableWrap { overflow-x: auto; margin-top: 18px; }
+.document table { width: 100%; min-width: 650px; border-collapse: collapse; font-size: 13px; }
+.document th, .document td { padding: 14px; border: 1px solid rgba(255,255,255,.1); text-align: left; vertical-align: top; }
+.document th { color: #e7ddeb; background: rgba(168,85,247,.1); }
+.document td { color: #a99eaf; }
+.callout { margin-top: 20px; padding: 17px; border: 1px solid rgba(199,131,255,.26); border-radius: 12px; background: rgba(168,85,247,.07); }
+.footer { display: flex; flex-wrap: wrap; gap: 18px; padding: 25px 0 38px; border-top: 1px solid rgba(255,255,255,.1); }
+.footer a { color: #8f8398; font-size: 12px; }
+
+@media (max-width: 620px) {
+  .document { padding-top: 52px; }
+  .document h1 { font-size: 3rem; }
+}

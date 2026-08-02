@@ -17,6 +17,7 @@ const SOCIAL_LINKS = [
 
 const FOLDERS = [
   { id: "beats", label: "Beats", icon: "🎵" },
+  { id: "resources", label: "Recursos para productores", icon: "💾", href: "/recursos" },
   { id: "proyectos", label: "Proyectos", icon: "🚀" },
   { id: "underground", label: "Underground GZK", icon: "🌐", href: "/underground" },
   { id: "sobre-mi", label: "Sobre Ktr3", icon: "👤" },
@@ -86,6 +87,7 @@ const TERMINAL_COMMANDS = {
     "  play        - Ultimo lanzamiento",
     "  beats       - Ir a mis beats",
     "  underground - Escena urbana de Gipuzkoa",
+    "  resources   - Recursos para productores",
     "  contact     - Info de contacto",
     "  about       - Sobre mi",
     "  socials     - Mis redes",
@@ -97,6 +99,7 @@ const TERMINAL_COMMANDS = {
   play: () => ["Abriendo ultimo lanzamiento...", "__ACTION__:url:https://www.youtube.com/watch?v=tMkv0ga4C1I"],
   beats: () => ["Cargando beats...", "__ACTION__:nav:beats"],
   underground: () => ["Abriendo Gipuzkoa Underground...", "__ACTION__:url:/underground"],
+  resources: () => ["Montando Ktr3 Sample Vault...", "__ACTION__:url:/recursos"],
   contact: () => [
     "Email: prod.ktr3@gmail.com",
     "Instagram: @ktr3ss",
@@ -141,6 +144,7 @@ const TERMINAL_COMMANDS = {
 
 const SPOTLIGHT_ITEMS = [
   { id: "beats", label: "Beats", sub: "Escucha y compra beats", icon: "🎵", action: "beats" },
+  { id: "resources", label: "Recursos para productores", sub: "Presets, MIDI, FX y plantillas", icon: "💾", action: "url:/recursos" },
   { id: "proyectos", label: "Proyectos", sub: "Mis proyectos y plataformas", icon: "🚀", action: "proyectos" },
   { id: "underground", label: "Underground GZK", sub: "Escena urbana de Gipuzkoa", icon: "🌐", action: "url:/underground" },
   { id: "sobre-mi", label: "Sobre Ktr3", sub: "Bio, estilos y herramientas", icon: "👤", action: "sobre-mi" },
@@ -840,6 +844,7 @@ function ContextMenu({ x, y, onClose, onAction }) {
     { label: "Sobre Ktr3OS", icon: "ℹ️", action: "about-os" },
     { divider: true },
     { label: "Abrir Beats", icon: "🎵", action: "beats" },
+    { label: "Recursos para productores", icon: "💾", action: "resources" },
     { label: "Abrir Proyectos", icon: "🚀", action: "proyectos" },
     { label: "Underground GZK", icon: "🌐", action: "underground" },
     { label: "Contacto", icon: "📬", action: "contacto" },
@@ -961,6 +966,7 @@ export default function Home() {
       case "beats": navigate("beats"); break;
       case "proyectos": navigate("proyectos"); break;
       case "underground": window.location.href = "/underground"; break;
+      case "resources": window.location.href = "/recursos"; break;
       case "contacto": navigate("contacto"); break;
       case "play": window.open("https://www.youtube.com/watch?v=tMkv0ga4C1I", "_blank"); break;
       case "buy": window.open("https://www.beatstars.com/ktr3", "_blank"); break;

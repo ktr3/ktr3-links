@@ -13,16 +13,26 @@
     "db:migrate": "node scripts/db-migrate.mjs",
     "db:import:current": "node scripts/import-current-catalog.mjs",
     "db:import:survey": "node scripts/import-underground-survey.mjs",
-    "db:import:catalog-update": "node scripts/import-underground-catalog-update.mjs"
+    "db:import:catalog-update": "node scripts/import-underground-catalog-update.mjs",
+    "admin:create": "node --env-file-if-exists=.env scripts/create-admin.mjs",
+    "resources:seed": "node scripts/seed-resources.mjs",
+    "resources:seed:oneshot": "node scripts/seed-original-oneshot.mjs",
+    "resources:backfill-midi-previews": "node scripts/backfill-midi-previews.mjs",
+    "security:refresh-disposable-emails": "node scripts/refresh-disposable-email-domains.mjs",
+    "cleanup:expired": "node scripts/cleanup-expired.mjs"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1097.0",
+    "@aws-sdk/s3-request-presigner": "^3.1097.0",
     "next": "^16.2.10",
     "postgres": "^3.4.9",
+    "posthog-js": "^1.409.5",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "zod": "^4.4.3"
   },
   "overrides": {
-    "postcss": "8.5.19"
+    "postcss": "8.5.19",
+    "sharp": "0.35.3"
   }
 }
