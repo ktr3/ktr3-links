@@ -50,6 +50,10 @@ test("production image includes the database client required by maintenance scri
     dockerfile,
     /COPY --from=dependencies --chown=nextjs:nodejs \/app\/node_modules\/postgres \.\/node_modules\/postgres/,
   );
+  assert.match(
+    dockerfile,
+    /COPY --from=dependencies --chown=nextjs:nodejs \/app\/node_modules\/zod \.\/node_modules\/zod/,
+  );
 });
 
 test("backup uses restrictive permissions, a validated custom dump and the production volume", async () => {

@@ -33,6 +33,7 @@ COPY --from=builder --chown=nextjs:nodejs /app/database ./database
 COPY --from=builder --chown=nextjs:nodejs /app/lib ./lib
 COPY --from=builder --chown=nextjs:nodejs /app/scripts ./scripts
 COPY --from=dependencies --chown=nextjs:nodejs /app/node_modules/postgres ./node_modules/postgres
+COPY --from=dependencies --chown=nextjs:nodejs /app/node_modules/zod ./node_modules/zod
 
 USER nextjs
 EXPOSE 3000
