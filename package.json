@@ -16,6 +16,7 @@
     "db:import:catalog-update": "node scripts/import-underground-catalog-update.mjs",
     "admin:create": "node --env-file-if-exists=.env scripts/create-admin.mjs",
     "resources:seed": "node scripts/seed-resources.mjs",
+    "resources:seed:lucid": "node scripts/seed-lucid-midi.mjs",
     "resources:seed:oneshot": "node scripts/seed-original-oneshot.mjs",
     "resources:backfill-midi-previews": "node scripts/backfill-midi-previews.mjs",
     "security:refresh-disposable-emails": "node scripts/refresh-disposable-email-domains.mjs",
