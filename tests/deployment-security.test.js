@@ -44,6 +44,14 @@ test("production compose fails closed on missing legal identity and persists res
   assert.match(compose, /resources_data:\/data\/resources/);
 });
 
+test("production image includes the database client required by maintenance scripts", async () => {
+  const dockerfile = await readFile(new URL("../Dockerfile", import.meta.url), "utf8");
+  assert.match(
+    dockerfile,
+    /COPY --from=dependencies --chown=nextjs:nodejs \/app\/node_modules\/postgres \.\/node_modules\/postgres/,
+  );
+});
+
 test("backup uses restrictive permissions, a validated custom dump and the production volume", async () => {
   const script = await readFile(new URL("../scripts/backup-resources.sh", import.meta.url), "utf8");
   assert.match(script, /umask 077/);
