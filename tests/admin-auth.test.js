@@ -75,6 +75,22 @@ test("configured public origin survives an internal Next.js container URL", () =
   }), false);
 });
 
+test("configured public origin allowlist accepts apex and www only", () => {
+  const trustedOrigin = "https://ktr3.es,https://www.ktr3.es";
+  for (const origin of ["https://ktr3.es", "https://www.ktr3.es"]) {
+    assert.equal(isTrustedMutationOrigin({
+      requestUrl: "https://0.0.0.0:3000/api/resources/lucid/request",
+      origin,
+      trustedOrigin,
+    }), true);
+  }
+  assert.equal(isTrustedMutationOrigin({
+    requestUrl: "https://0.0.0.0:3000/api/resources/lucid/request",
+    origin: "https://ktr3.es.evil.example",
+    trustedOrigin,
+  }), false);
+});
+
 test("mutation origin diagnostics contain origins only and omit paths or request data", () => {
   const request = new Request("http://internal:3000/api/resources/private?token=secret", {
     headers: {
@@ -86,7 +102,7 @@ test("mutation origin diagnostics contain origins only and omit paths or request
   assert.deepEqual(mutationOriginDiagnostic(request), {
     requestOrigin: "http://internal:3000",
     suppliedOrigin: "https://ktr3.es",
-    configuredOrigin: null,
+    configuredOrigins: [],
     forwardedOrigin: "https://ktr3.es",
   });
 });

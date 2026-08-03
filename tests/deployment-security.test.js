@@ -40,7 +40,7 @@ test("production compose fails closed on missing legal identity and persists res
   const compose = await readFile(new URL("../docker-compose.prod.yml", import.meta.url), "utf8");
   assert.match(compose, /PUBLIC_LEGAL_NAME: \$\{PUBLIC_LEGAL_NAME:\?PUBLIC_LEGAL_NAME is required\}/);
   assert.match(compose, /PUBLIC_LEGAL_TAX_ID: \$\{PUBLIC_LEGAL_TAX_ID:\?PUBLIC_LEGAL_TAX_ID is required\}/);
-  assert.match(compose, /APP_ORIGIN: \$\{APP_ORIGIN:-https:\/\/ktr3\.es\}/);
+  assert.match(compose, /APP_ORIGIN: \$\{APP_ORIGIN:-https:\/\/ktr3\.es,https:\/\/www\.ktr3\.es\}/);
   assert.match(compose, /resources_data:\/data\/resources/);
 });
 
