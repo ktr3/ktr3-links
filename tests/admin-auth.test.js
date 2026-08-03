@@ -10,7 +10,10 @@ import {
   digestToken,
   sessionCookieOptions,
 } from "../lib/auth/session.js";
-import { isTrustedMutationOrigin } from "../lib/auth/request.js";
+import {
+  isTrustedMutationOrigin,
+  mutationOriginDiagnostic,
+} from "../lib/auth/request.js";
 
 test("password hashes round-trip without storing plaintext", async () => {
   const password = "correct horse battery staple";
@@ -57,4 +60,19 @@ test("mutation origin accepts same-origin requests and rejects cross-site reques
     requestUrl: "http://localhost:3000/api/admin/login",
     origin: "http://localhost:3000",
   }), true);
+});
+
+test("mutation origin diagnostics contain origins only and omit paths or request data", () => {
+  const request = new Request("http://internal:3000/api/resources/private?token=secret", {
+    headers: {
+      origin: "https://ktr3.es/private/path",
+      "x-forwarded-proto": "https",
+      "x-forwarded-host": "ktr3.es",
+    },
+  });
+  assert.deepEqual(mutationOriginDiagnostic(request), {
+    requestOrigin: "http://internal:3000",
+    suppliedOrigin: "https://ktr3.es",
+    forwardedOrigin: "https://ktr3.es",
+  });
 });
