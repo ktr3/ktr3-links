@@ -32,6 +32,7 @@ services:
       NODE_ENV: production
       HOSTNAME: 0.0.0.0
       PORT: 3000
+      APP_ORIGIN: ${APP_ORIGIN:-https://ktr3.es}
       DATABASE_URL: postgres://${POSTGRES_USER:-ktr3}:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}@database:5432/${POSTGRES_DB:-ktr3_underground}
       DATABASE_MAX_CONNECTIONS: ${DATABASE_MAX_CONNECTIONS:-5}
       RESOURCE_STORAGE_DRIVER: ${RESOURCE_STORAGE_DRIVER:-local}
