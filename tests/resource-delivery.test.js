@@ -110,6 +110,13 @@ test("resource request route validates permanent email and quotas before creatin
   assert.ok(limiterIndex >= 0 && limiterIndex < deliveryIndex);
 });
 
+test("resource emails build public links from the configured app origin", async () => {
+  const source = await readFile(resourceRequestRoutePath, "utf8");
+  assert.match(source, /publicAppOrigin/);
+  assert.match(source, /trustedOrigin:\s*process\.env\.APP_ORIGIN/);
+  assert.doesNotMatch(source, /new URL\(request\.url\)\.origin/);
+});
+
 test("resource status transitions protect archived content", () => {
   assert.equal(assertStatusTransition("draft", "published"), "published");
   assert.equal(assertStatusTransition("published", "draft"), "draft");

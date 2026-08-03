@@ -13,6 +13,7 @@ import {
 import {
   isTrustedMutationOrigin,
   mutationOriginDiagnostic,
+  publicAppOrigin,
 } from "../lib/auth/request.js";
 
 test("password hashes round-trip without storing plaintext", async () => {
@@ -89,6 +90,13 @@ test("configured public origin allowlist accepts apex and www only", () => {
     origin: "https://ktr3.es.evil.example",
     trustedOrigin,
   }), false);
+});
+
+test("public links use the configured site origin instead of the container URL", () => {
+  assert.equal(publicAppOrigin({
+    requestUrl: "http://0.0.0.0:3000/api/resources/lucid/request",
+    trustedOrigin: "https://ktr3.es,https://www.ktr3.es",
+  }), "https://ktr3.es");
 });
 
 test("mutation origin diagnostics contain origins only and omit paths or request data", () => {

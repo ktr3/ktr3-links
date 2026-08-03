@@ -1,6 +1,9 @@
 import { sendEmail } from "../../../../../lib/email/index.js";
 import { resourceDeliveryEmail } from "../../../../../lib/email/templates.js";
-import { assertTrustedMutation } from "../../../../../lib/auth/request.js";
+import {
+  assertTrustedMutation,
+  publicAppOrigin,
+} from "../../../../../lib/auth/request.js";
 import { createDelivery } from "../../../../../lib/resources/delivery.js";
 import { getPublicResourceBySlug } from "../../../../../lib/resources/repository.js";
 import {
@@ -17,7 +20,11 @@ import { verifyTurnstile } from "../../../../../lib/security/turnstile.js";
 export const dynamic = "force-dynamic";
 
 function absoluteUrl(request, path) {
-  return new URL(path, new URL(request.url).origin).toString();
+  const origin = publicAppOrigin({
+    requestUrl: request.url,
+    trustedOrigin: process.env.APP_ORIGIN,
+  });
+  return new URL(path, origin).toString();
 }
 
 export async function POST(request, context) {
