@@ -8,6 +8,8 @@ backup_dir="${backup_root}/${timestamp}"
 compose_file="${COMPOSE_FILE:-docker-compose.prod.yml}"
 compose_project="${COMPOSE_PROJECT_NAME:-ktr3production}"
 resource_volume="${RESOURCE_VOLUME_NAME:-${compose_project}_resources_data}"
+backup_uid="$(id -u)"
+backup_gid="$(id -g)"
 mkdir -p "${backup_dir}"
 
 docker compose -f "${compose_file}" exec -T database \
@@ -19,10 +21,11 @@ docker compose -f "${compose_file}" exec -T database \
 
 if docker volume inspect "${resource_volume}" > /dev/null 2>&1; then
   docker run --rm \
+    --user "${backup_uid}:${backup_gid}" \
     -v "${resource_volume}:/source:ro" \
     -v "$(cd "${backup_dir}" && pwd):/backup" \
     alpine:3.22 \
-    tar -czf /backup/resources.tar.gz -C /source .
+    sh -eu -c 'umask 077; tar -czf /backup/resources.tar.gz -C /source .'
 else
   : > "${backup_dir}/resources-volume-not-created"
 fi

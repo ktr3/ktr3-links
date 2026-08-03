@@ -49,4 +49,6 @@ test("backup uses restrictive permissions, a validated custom dump and the produ
   assert.match(script, /pg_dump -Fc/);
   assert.match(script, /pg_restore --list/);
   assert.match(script, /COMPOSE_PROJECT_NAME:-ktr3production/);
+  assert.match(script, /--user "\$\{backup_uid\}:\$\{backup_gid\}"/);
+  assert.match(script, /sh -eu -c 'umask 077; tar/);
 });
