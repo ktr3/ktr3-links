@@ -7,6 +7,10 @@ import {
   normalizeCatalogUpdateRow,
   parseCatalogUpdatePayload,
 } from "../lib/underground/catalog-update.js";
+import {
+  normalizeCatalogAdditionRow,
+  parseCatalogAdditionsPayload,
+} from "../lib/underground/catalog-additions.js";
 
 test("catalog update roles include the manual visual label", () => {
   assert.equal(catalogUpdateRole("Artista"), "artist");
@@ -66,4 +70,36 @@ test("unsupported Spotify user URLs are warnings, not playable resources", () =>
 test("catalog update payloads require a rows array", () => {
   assert.equal(parseCatalogUpdatePayload(JSON.stringify({ rows: [{ name: "AA", role: "DJ" }] })).length, 1);
   assert.throws(() => parseCatalogUpdatePayload("{}"), /rows array/i);
+});
+
+test("catalog additions require dated consent and retain an optional public bio", () => {
+  const row = normalizeCatalogAdditionRow({
+    sourceRow: 3,
+    submittedAt: "2026-07-15T19:34:28.432+02:00",
+    consentText: "Autorizo la publicación de este perfil en el directorio.",
+    name: "Zuribeltz",
+    role: "Foto / visual",
+    instagram: "@zuriibeltz",
+    city: "Beasain",
+    bio: "Trabajo en arte visual, branding y comunicación.",
+  });
+
+  assert.equal(row.role, "visual");
+  assert.equal(row.sourceRow, 3);
+  assert.equal(row.submittedAt.toISOString(), "2026-07-15T17:34:28.432Z");
+  assert.equal(row.bio, "Trabajo en arte visual, branding y comunicación.");
+  assert.deepEqual(row.links, [
+    { platform: "instagram", url: "https://www.instagram.com/zuriibeltz/" },
+  ]);
+});
+
+test("catalog additions reject rows without valid consent metadata", () => {
+  const base = { name: "Example", role: "DJ" };
+  assert.throws(() => normalizeCatalogAdditionRow(base), /consent/i);
+  assert.throws(() => normalizeCatalogAdditionRow({
+    ...base,
+    consentText: "Autorizo la publicación.",
+    submittedAt: "not-a-date",
+  }), /date/i);
+  assert.throws(() => parseCatalogAdditionsPayload("{}"), /rows array/i);
 });
