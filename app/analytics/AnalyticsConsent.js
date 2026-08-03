@@ -15,6 +15,7 @@ import {
   stopAnalytics,
 } from "../../lib/analytics/client.js";
 import { describeLink, shouldTrackPath } from "../../lib/analytics/privacy.js";
+import { clearUndergroundAnalyticsIdentity } from "../../lib/analytics/underground-client.js";
 import styles from "./AnalyticsConsent.module.css";
 
 const POSTHOG_TOKEN = process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN || "";
@@ -41,7 +42,10 @@ export default function AnalyticsConsent() {
     setSettingsOpen(false);
 
     if (nextChoice.analytics) activateAnalytics();
-    else stopAnalytics();
+    else {
+      stopAnalytics();
+      clearUndergroundAnalyticsIdentity();
+    }
 
     window.dispatchEvent(new CustomEvent(CONSENT_EVENT, { detail: nextChoice }));
   }, [activateAnalytics]);
@@ -52,6 +56,7 @@ export default function AnalyticsConsent() {
     setChoice(stored);
     setAnalyticsEnabled(stored?.analytics === true);
     if (stored?.analytics) activateAnalytics();
+    else clearUndergroundAnalyticsIdentity();
 
     const openSettings = () => setSettingsOpen(true);
     window.addEventListener(OPEN_CONSENT_EVENT, openSettings);

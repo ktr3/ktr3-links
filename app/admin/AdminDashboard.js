@@ -293,6 +293,7 @@ export default function AdminDashboard({ admin }) {
         <a href="/" className={styles.adminBrand}><img src="/logo.png" alt="" /><span>KTR3 CONTROL</span></a>
         <div className={styles.adminIdentity}>
           <span><i /> {admin.displayName}</span>
+          <a href="/admin/analytics" className={styles.adminNavPrimary}>Métricas</a>
           <a href="/recursos" target="_blank">Ver biblioteca ↗</a>
           <button type="button" onClick={logout}>Salir</button>
         </div>

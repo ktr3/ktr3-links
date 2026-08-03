@@ -39,6 +39,14 @@ export default function CookiesPage() {
                 <td>Recordar la vuelta RANDOM para evitar repeticiones.</td><td>Hasta borrar datos locales</td><td>Funcional</td>
               </tr>
               <tr>
+                <td><code>ktr3_analytics_visitor</code></td><td>Ktr3</td>
+                <td>Distinguir visitantes de forma seudónima para métricas agregadas de Underground.</td><td>Hasta retirar el consentimiento o borrar datos locales</td><td>Analítica</td>
+              </tr>
+              <tr>
+                <td><code>ktr3_analytics_session</code></td><td>Ktr3</td>
+                <td>Limitar abuso y agrupar eventos durante la pestaña actual.</td><td>Durante la sesión de la pestaña</td><td>Analítica</td>
+              </tr>
+              <tr>
                 <td><code>ph_*_posthog</code></td><td>PostHog EU</td>
                 <td>Sesión anónima, métricas, embudos, heatmaps y session replay enmascarado.</td><td>Máximo 12 meses</td><td>Analítica</td>
               </tr>
@@ -52,7 +60,8 @@ export default function CookiesPage() {
         <p>
           PostHog no se descarga ni se inicializa hasta aceptar la categoría analítica. Rechazar es tan directo como
           aceptar. Puedes cambiar la decisión en cualquier momento desde el botón «Privacidad» situado en la esquina
-          inferior de la web; al retirar el permiso se detiene la captura y se limpia la persistencia analítica.
+          inferior de la web; al retirar el permiso se detiene la captura y se borran también los identificadores de
+          analítica propia almacenados en el navegador.
         </p>
       </section>
 
@@ -62,6 +71,7 @@ export default function CookiesPage() {
           <li>Exclusión completa de <code>/admin</code> y rutas API.</li>
           <li>Campos de formularios, emails, nombres, contraseñas y tokens excluidos.</li>
           <li>Parámetros y fragmentos eliminados de las URLs antes de enviarlas.</li>
+          <li>En Underground no se guardan búsquedas escritas ni URLs externas; solo categorías, contadores y plataforma.</li>
           <li>Descarte de direcciones IP obligatorio antes de activar esta integración en producción.</li>
           <li>Respeto de la señal Do Not Track cuando el navegador la proporcione.</li>
         </ul>

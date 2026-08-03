@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useFairRadio } from "../../hooks/useFairRadio";
 import { useUndergroundCatalog } from "../../hooks/useUndergroundCatalog";
 import { spotifyEmbedType, spotifyEmbedUrl, spotifyUri } from "../../lib/underground/spotify";
@@ -9,6 +9,12 @@ import {
   listenDestination,
   spotifyListeningUrl,
 } from "../../lib/underground/listening";
+import {
+  trackUndergroundEvent,
+  undergroundAnalyticsAllowed,
+  undergroundResultBucket,
+} from "../../lib/analytics/underground-client";
+import { CONSENT_EVENT } from "../../lib/analytics/consent";
 import styles from "./Underground.module.css";
 import SoundCloudRadioPlayer from "./SoundCloudRadioPlayer";
 import SpotifyRadioPlayer from "./SpotifyRadioPlayer";
@@ -139,6 +145,8 @@ export default function UndergroundPage() {
   const [query, setQuery] = useState("");
   const [role, setRole] = useState("all");
   const [selected, setSelected] = useState(null);
+  const [analyticsAllowed, setAnalyticsAllowed] = useState(false);
+  const lastRadioImpression = useRef("");
   const { profiles: people } = useUndergroundCatalog(PEOPLE);
   const radioPool = useMemo(
     () => people.filter(isRadioEligibleProfile),
@@ -156,6 +164,24 @@ export default function UndergroundPage() {
     total: radioTotal,
     cycle: radioCycle,
   } = useFairRadio(radioPool, { getKey: profileKey, featuredId: featuredRadioId });
+
+  useEffect(() => {
+    setAnalyticsAllowed(undergroundAnalyticsAllowed());
+    const updateConsent = (event) => setAnalyticsAllowed(event.detail?.analytics === true);
+    window.addEventListener(CONSENT_EVENT, updateConsent);
+    return () => window.removeEventListener(CONSENT_EVENT, updateConsent);
+  }, []);
+
+  useEffect(() => {
+    if (!analyticsAllowed || !radioArtist?.id) return;
+    const impressionKey = `${radioCycle}:${radioPosition}:${radioArtist.id}`;
+    if (lastRadioImpression.current === impressionKey) return;
+    lastRadioImpression.current = impressionKey;
+    trackUndergroundEvent("random_impression", {
+      profileId: radioArtist.id,
+      context: { source: "radio", role: radioArtist.roles[0] },
+    });
+  }, [analyticsAllowed, radioArtist?.id, radioArtist?.roles, radioCycle, radioPosition]);
 
   const pickRandomRadioArtist = () => {
     nextRadioArtist();
@@ -185,14 +211,54 @@ export default function UndergroundPage() {
     }, {});
   }, [filtered]);
 
+  useEffect(() => {
+    if (!analyticsAllowed || query.trim().length < 2) return undefined;
+    const timer = window.setTimeout(() => {
+      trackUndergroundEvent("search_used", {
+        context: {
+          source: "directory",
+          role,
+          resultBucket: undergroundResultBucket(filtered.length),
+        },
+      });
+    }, 600);
+    return () => window.clearTimeout(timer);
+  }, [analyticsAllowed, filtered.length, query, role]);
+
   const openPerson = (person) => {
     setSelected(person);
     playUiSound();
+    const source = query.trim() ? "search" : "directory";
+    trackUndergroundEvent("profile_open", {
+      profileId: person.id,
+      context: { source, role },
+    });
+    if (source === "search") {
+      trackUndergroundEvent("search_result_click", {
+        profileId: person.id,
+        context: { source: "search", role },
+      });
+    }
+  };
+
+  const selectRole = (nextRole) => {
+    setRole(nextRole);
+    trackUndergroundEvent("role_filter_selected", {
+      context: { source: "directory", role: nextRole },
+    });
+  };
+
+  const trackExternalLink = (person, destinationPlatform, source) => {
+    trackUndergroundEvent("external_link_click", {
+      profileId: person?.id,
+      destinationPlatform,
+      context: { source, role: person?.roles?.[0] || "all" },
+    });
   };
 
   const resetFilters = () => {
     setQuery("");
-    setRole("all");
+    selectRole("all");
   };
 
   const selectedSpotifyUrl = spotifyListeningUrl(selected);
@@ -341,6 +407,7 @@ export default function UndergroundPage() {
                     href={radioDestination.url}
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={() => trackExternalLink(radioArtist, radioDestination.platform, "radio")}
                   >
                     abrir {radioDestination.platform === "apple_music" ? "apple music" : radioDestination.platform}
                   </a>
@@ -534,9 +601,9 @@ export default function UndergroundPage() {
           </header>
 
           <nav className="ug-role-tabs" aria-label="Filtrar por rol">
-            <button className={role === "all" ? "active" : ""} onClick={() => setRole("all")}>Todo {counts.all}</button>
+            <button className={role === "all" ? "active" : ""} onClick={() => selectRole("all")}>Todo {counts.all}</button>
             {Object.entries(ROLE_META).map(([key, meta]) => (
-              <button key={key} className={role === key ? "active" : ""} onClick={() => setRole(key)}>
+              <button key={key} className={role === key ? "active" : ""} onClick={() => selectRole(key)}>
                 {meta.short} {counts[key]}
               </button>
             ))}
@@ -581,7 +648,7 @@ export default function UndergroundPage() {
             <aside className="ug-summary">
               <h2>GZK</h2>
               {Object.entries(ROLE_META).map(([key, meta]) => (
-                <button key={key} onClick={() => setRole(key)}>
+                <button key={key} onClick={() => selectRole(key)}>
                   <i className={meta.color} /> <span>{meta.label}</span> <strong>{counts[key]}</strong>
                 </button>
               ))}
@@ -671,7 +738,7 @@ export default function UndergroundPage() {
             )}
             <div className="ug-profile-actions">
               {selected.instagram && (
-                <a href={`https://www.instagram.com/${selected.instagram}/`} target="_blank" rel="noopener noreferrer">Instagram</a>
+                <a href={`https://www.instagram.com/${selected.instagram}/`} target="_blank" rel="noopener noreferrer" onClick={() => trackExternalLink(selected, "instagram", "profile")}>Instagram</a>
               )}
               {[
                 { platform: "spotify", url: selectedSpotifyUrl, label: "Spotify" },
@@ -687,6 +754,7 @@ export default function UndergroundPage() {
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() => trackExternalLink(selected, link.platform, "profile")}
                 >
                   {selectedDestination?.url === link.url ? selectedDestination.label : link.label}
                 </a>

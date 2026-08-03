@@ -40,6 +40,12 @@ export default function PrivacyPage() {
           procedencia, clics, profundidad de scroll, rendimiento, embudos y reconstrucciones enmascaradas de sesión.
           No grabamos el panel administrativo ni el contenido introducido en formularios.
         </p>
+        <p>
+          En Underground también contabilizamos qué perfiles se muestran en RANDOM, qué fichas se abren, qué rol se
+          filtra, si una búsqueda devuelve pocos o muchos resultados y a qué plataforma se sale. Para estas métricas
+          usamos identificadores aleatorios que se convierten en una huella HMAC antes de guardarse. No conservamos la
+          búsqueda escrita, la IP, el email, el nombre del visitante ni la URL externa completa.
+        </p>
         <h3>Entrega de recursos</h3>
         <p>
           Tratamos el email y, opcionalmente, el nombre para enviar el enlace solicitado, prevenir abuso y contabilizar
@@ -73,7 +79,7 @@ export default function PrivacyPage() {
         <p>
           Podemos utilizar alojamiento propio, PostgreSQL, Cloudflare Turnstile para protección antiabuso, el proveedor
           de correo configurado para las entregas y PostHog Cloud EU para analítica consentida. PostHog EU aloja los
-          datos en Frankfurt. Antes de producción activaremos el descarte de la IP almacenada en la configuración del proyecto.
+          datos en Frankfurt. La configuración del proyecto debe mantener activo el descarte de la IP del cliente.
         </p>
       </section>
 
@@ -84,7 +90,7 @@ export default function PrivacyPage() {
           <li>Enlaces temporales de descarga: 24 horas.</li>
           <li>Huellas pseudónimas para limitar solicitudes: máximo 24 horas.</li>
           <li>Reconstrucciones de sesión: objetivo máximo de 30 días.</li>
-          <li>Analítica agregada: objetivo máximo de 14 meses.</li>
+          <li>Eventos seudónimos propios de Underground y analítica agregada: máximo 14 meses.</li>
           <li>Suscripción: hasta retirar el consentimiento, conservando la prueba estrictamente necesaria.</li>
         </ul>
       </section>

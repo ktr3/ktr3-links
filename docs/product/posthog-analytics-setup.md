@@ -42,6 +42,12 @@ La integración está preparada en local y no se despliega automáticamente. El 
 | `resource_gate_submitted` | Envío, sin nombre ni email |
 | `resource_gate_completed` | Enlace preparado correctamente |
 | `resource_gate_failed` | Error en el flujo de entrega |
+| `underground_random_impression` | Perfil mostrado por RANDOM |
+| `underground_profile_open` | Apertura de una ficha de la escena |
+| `underground_search_result_click` | Elección de un resultado, sin texto buscado |
+| `underground_external_link_click` | Salida a una plataforma, sin URL completa |
+| `underground_role_filter_selected` | Filtro de rol elegido |
+| `underground_search_used` | Uso de búsqueda con tramo de resultados, sin consulta |
 
 ## Embudos recomendados
 
@@ -65,3 +71,4 @@ Evento de entrada: `resource_gate_completed`. Evento de retorno: `$pageview /rec
 - Consola del navegador.
 - Contenido o tiempo de escucha dentro de Spotify.
 - URLs externas completas; solo se conserva el dominio de destino.
+- Texto escrito en la búsqueda de Underground; solo se conserva el tramo de resultados.

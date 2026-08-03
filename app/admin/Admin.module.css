@@ -98,6 +98,7 @@
 .adminIdentity span { display: flex; align-items: center; gap: 7px; color: #d1c6da; }
 .adminIdentity i { width: 7px; height: 7px; border-radius: 50%; background: #67e8a6; box-shadow: 0 0 10px #67e8a6; }
 .adminIdentity a { color: #b980e4; text-decoration: none; }
+.adminNavPrimary { display: inline-flex; }
 .adminIdentity button { color: #9d94a5; border: 0; background: transparent; cursor: pointer; }
 
 .adminShell { position: relative; z-index: 1; width: min(1240px, calc(100% - 40px)); margin: auto; padding: 70px 0 100px; }
@@ -169,6 +170,7 @@
 @media (max-width: 600px) {
   .adminHeader { padding: 0 15px; }
   .adminIdentity span, .adminIdentity a { display: none; }
+  .adminIdentity .adminNavPrimary { display: inline-flex; }
   .adminShell { width: min(100% - 24px, 1240px); padding-top: 48px; }
   .stats { grid-template-columns: 1fr 1fr; gap: 8px; }
   .stats article { padding: 15px; }
