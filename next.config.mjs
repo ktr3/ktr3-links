@@ -12,7 +12,7 @@ export function createContentSecurityPolicy({ development = process.env.NODE_ENV
     "font-src 'self' data:",
     "media-src 'self' data: blob: https://*.sndcdn.com https://w.soundcloud.com",
     "connect-src 'self' https://challenges.cloudflare.com https://eu.i.posthog.com https://eu.posthog.com wss://eu.i.posthog.com",
-    "frame-src https://challenges.cloudflare.com https://open.spotify.com https://w.soundcloud.com",
+    "frame-src https://challenges.cloudflare.com https://open.spotify.com https://w.soundcloud.com https://www.youtube.com",
     "worker-src 'self' blob:",
     "manifest-src 'self'",
     "upgrade-insecure-requests",

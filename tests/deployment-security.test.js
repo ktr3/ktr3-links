@@ -17,6 +17,10 @@ test("every route receives the production security headers", async () => {
   assert.match(byName["Content-Security-Policy"], /frame-ancestors 'none'/);
   assert.match(byName["Content-Security-Policy"], /https:\/\/challenges\.cloudflare\.com/);
   assert.match(byName["Content-Security-Policy"], /https:\/\/eu\.i\.posthog\.com/);
+  assert.match(
+    byName["Content-Security-Policy"],
+    /frame-src[^;]*https:\/\/www\.youtube\.com/,
+  );
   assert.doesNotMatch(createContentSecurityPolicy({ development: false }), /unsafe-eval/);
   assert.match(createContentSecurityPolicy({ development: true }), /unsafe-eval/);
 });
