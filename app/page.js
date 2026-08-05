@@ -6,6 +6,11 @@ import { useState, useEffect, useRef, useCallback } from "react";
    DATA
    ═══════════════════════════════════════════ */
 
+// Para cambiar "Ultimo lanzamiento", sustituye solo este ID de YouTube.
+const LATEST_RELEASE_YOUTUBE_ID = "3e33unFCCc8";
+const LATEST_RELEASE_YOUTUBE_URL = `https://www.youtube.com/watch?v=${LATEST_RELEASE_YOUTUBE_ID}`;
+const LATEST_RELEASE_YOUTUBE_EMBED_URL = `https://www.youtube.com/embed/${LATEST_RELEASE_YOUTUBE_ID}`;
+
 const SOCIAL_LINKS = [
   { id: "instagram", label: "Instagram", url: "https://www.instagram.com/ktr3ss/", icon: "/icons/instagram.svg" },
   { id: "tiktok", label: "TikTok", url: "https://www.tiktok.com/@ktr3ss", icon: "/icons/tiktok.svg" },
@@ -96,7 +101,7 @@ const TERMINAL_COMMANDS = {
     "  sudo make me a beat - ???",
     "  neofetch    - Info del sistema",
   ],
-  play: () => ["Abriendo ultimo lanzamiento...", "__ACTION__:url:https://www.youtube.com/watch?v=tMkv0ga4C1I"],
+  play: () => ["Abriendo ultimo lanzamiento...", `__ACTION__:url:${LATEST_RELEASE_YOUTUBE_URL}`],
   beats: () => ["Cargando beats...", "__ACTION__:nav:beats"],
   underground: () => ["Abriendo Gipuzkoa Underground...", "__ACTION__:url:/underground"],
   resources: () => ["Montando Ktr3 Sample Vault...", "__ACTION__:url:/recursos"],
@@ -583,7 +588,7 @@ function BeatsView({ onBack }) {
           <h3 className="release-label">Ultimo lanzamiento</h3>
           <div className="yt-embed">
             <iframe
-              src="https://www.youtube.com/embed/tMkv0ga4C1I"
+              src={LATEST_RELEASE_YOUTUBE_EMBED_URL}
               title="Ultimo lanzamiento Ktr3"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
@@ -968,7 +973,7 @@ export default function Home() {
       case "underground": window.location.href = "/underground"; break;
       case "resources": window.location.href = "/recursos"; break;
       case "contacto": navigate("contacto"); break;
-      case "play": window.open("https://www.youtube.com/watch?v=tMkv0ga4C1I", "_blank"); break;
+      case "play": window.open(LATEST_RELEASE_YOUTUBE_URL, "_blank"); break;
       case "buy": window.open("https://www.beatstars.com/ktr3", "_blank"); break;
     }
   }, []);
