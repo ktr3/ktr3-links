@@ -6,10 +6,14 @@ import { useState, useEffect, useRef, useCallback } from "react";
    DATA
    ═══════════════════════════════════════════ */
 
-// Para cambiar "Ultimo lanzamiento", sustituye solo este ID de YouTube.
-const LATEST_RELEASE_YOUTUBE_ID = "3e33unFCCc8";
-const LATEST_RELEASE_YOUTUBE_URL = `https://www.youtube.com/watch?v=${LATEST_RELEASE_YOUTUBE_ID}`;
-const LATEST_RELEASE_YOUTUBE_EMBED_URL = `https://www.youtube.com/embed/${LATEST_RELEASE_YOUTUBE_ID}`;
+const FALLBACK_LATEST_RELEASE = Object.freeze({
+  videoId: "3e33unFCCc8",
+  title: "Avril Lavigne – Complicated (Jerk Remix / Type Beat) | Prod. KTR3",
+  publishedAt: "2026-08-05T15:42:02+00:00",
+  kind: "video",
+  url: "https://www.youtube.com/watch?v=3e33unFCCc8",
+  embedUrl: "https://www.youtube.com/embed/3e33unFCCc8",
+});
 
 const SOCIAL_LINKS = [
   { id: "instagram", label: "Instagram", url: "https://www.instagram.com/ktr3ss/", icon: "/icons/instagram.svg" },
@@ -101,7 +105,7 @@ const TERMINAL_COMMANDS = {
     "  sudo make me a beat - ???",
     "  neofetch    - Info del sistema",
   ],
-  play: () => ["Abriendo ultimo lanzamiento...", `__ACTION__:url:${LATEST_RELEASE_YOUTUBE_URL}`],
+  play: () => ["Abriendo ultimo lanzamiento...", "__ACTION__:latest-release"],
   beats: () => ["Cargando beats...", "__ACTION__:nav:beats"],
   underground: () => ["Abriendo Gipuzkoa Underground...", "__ACTION__:url:/underground"],
   resources: () => ["Montando Ktr3 Sample Vault...", "__ACTION__:url:/recursos"],
@@ -580,7 +584,7 @@ function ProjectDetail({ project, onBack }) {
    FOLDER VIEWS
    ═══════════════════════════════════════════ */
 
-function BeatsView({ onBack }) {
+function BeatsView({ onBack, latestRelease, beatStarsPlayerUrl }) {
   return (
     <FinderWindow title="Beats" onClose={onBack} onBack={onBack}>
       <div className="beats-view">
@@ -588,19 +592,36 @@ function BeatsView({ onBack }) {
           <h3 className="release-label">Ultimo lanzamiento</h3>
           <div className="yt-embed">
             <iframe
-              src={LATEST_RELEASE_YOUTUBE_EMBED_URL}
-              title="Ultimo lanzamiento Ktr3"
+              src={latestRelease.embedUrl}
+              title={`${latestRelease.title} — YouTube`}
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
               style={{ border: "none", width: "100%", height: "100%" }}
             />
           </div>
-          <p className="release-title">Ultimo lanzamiento</p>
-          <p className="release-sub">Producido por Ktr3</p>
+          <p className="release-title">{latestRelease.title}</p>
+          <p className="release-sub">
+            {latestRelease.kind === "short" ? "Último vídeo de Ktr3" : "Último lanzamiento de Ktr3"}
+          </p>
         </div>
 
         <h2>{BEATS_CONTENT.title}</h2>
         <p className="beats-desc">{BEATS_CONTENT.description}</p>
+        {beatStarsPlayerUrl && (
+          <section className="beatstars-player" aria-labelledby="beatstars-player-title">
+            <h3 id="beatstars-player-title" className="release-label">BeatStars · catálogo actualizado</h3>
+            <iframe
+              src={beatStarsPlayerUrl}
+              title="Beats de Ktr3 en BeatStars"
+              width="100%"
+              height="420"
+              scrolling="yes"
+              allow="autoplay; encrypted-media"
+              loading="lazy"
+            />
+          </section>
+        )}
+        <h3 className="release-label">SoundCloud</h3>
         <div className="beat-player">
           <iframe
             width="100%"
@@ -691,7 +712,7 @@ function ContactView({ onBack }) {
    INTERACTIVE TERMINAL
    ═══════════════════════════════════════════ */
 
-function InteractiveTerminal({ onNavigate }) {
+function InteractiveTerminal({ onNavigate, latestReleaseUrl }) {
   const [history, setHistory] = useState([{ type: "output", lines: ["Bienvenido a Ktr3OS. Escribe 'help' para ver comandos."] }]);
   const [input, setInput] = useState("");
   const [matrixActive, setMatrixActive] = useState(false);
@@ -724,6 +745,8 @@ function InteractiveTerminal({ onNavigate }) {
           setMatrixActive(true);
           setTimeout(() => setMatrixActive(false), 4000);
           lines.push("Entering the Matrix...");
+        } else if (line === "__ACTION__:latest-release") {
+          window.open(latestReleaseUrl, "_blank");
         } else if (line.startsWith("__ACTION__:url:")) {
           window.open(line.slice(15), "_blank");
         } else if (line.startsWith("__ACTION__:nav:")) {
@@ -937,6 +960,36 @@ export default function Home() {
   const [showNotif, setShowNotif] = useState(false);
   const [contextMenu, setContextMenu] = useState(null);
   const [showAboutOS, setShowAboutOS] = useState(false);
+  const [latestRelease, setLatestRelease] = useState(FALLBACK_LATEST_RELEASE);
+  const [beatStarsPlayerUrl, setBeatStarsPlayerUrl] = useState(null);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    const loadMusicContent = async () => {
+      const [youtubeResult, beatStarsResult] = await Promise.allSettled([
+        fetch("/api/latest-youtube", { signal: controller.signal }).then(async (response) => {
+          if (!response.ok) throw new Error("latest_youtube_unavailable");
+          return response.json();
+        }),
+        fetch("/api/beatstars-player", { signal: controller.signal }).then(async (response) => {
+          if (response.status === 204) return null;
+          if (!response.ok) throw new Error("beatstars_player_unavailable");
+          return response.json();
+        }),
+      ]);
+
+      if (youtubeResult.status === "fulfilled" && youtubeResult.value?.video) {
+        setLatestRelease(youtubeResult.value.video);
+      }
+      if (beatStarsResult.status === "fulfilled" && beatStarsResult.value?.playerUrl) {
+        setBeatStarsPlayerUrl(beatStarsResult.value.playerUrl);
+      }
+    };
+
+    loadMusicContent();
+    return () => controller.abort();
+  }, []);
 
   // Boot sequence
   const handleBootComplete = useCallback(() => {
@@ -973,10 +1026,10 @@ export default function Home() {
       case "underground": window.location.href = "/underground"; break;
       case "resources": window.location.href = "/recursos"; break;
       case "contacto": navigate("contacto"); break;
-      case "play": window.open(LATEST_RELEASE_YOUTUBE_URL, "_blank"); break;
+      case "play": window.open(latestRelease.url, "_blank"); break;
       case "buy": window.open("https://www.beatstars.com/ktr3", "_blank"); break;
     }
-  }, []);
+  }, [latestRelease.url]);
 
   const goDesktop = () => {
     setCurrentView("desktop");
@@ -993,7 +1046,13 @@ export default function Home() {
       return <ProjectDetail project={selectedProject} onBack={() => setSelectedProject(null)} />;
     }
     switch (currentView) {
-      case "beats": return <BeatsView onBack={goDesktop} />;
+      case "beats": return (
+        <BeatsView
+          onBack={goDesktop}
+          latestRelease={latestRelease}
+          beatStarsPlayerUrl={beatStarsPlayerUrl}
+        />
+      );
       case "proyectos": return <ProjectsView onBack={goDesktop} onSelectProject={setSelectedProject} />;
       case "sobre-mi": return <AboutView onBack={goDesktop} />;
       case "contacto": return <ContactView onBack={goDesktop} />;
@@ -1041,7 +1100,7 @@ export default function Home() {
       )}
 
       {/* Interactive Terminal */}
-      <InteractiveTerminal onNavigate={navigate} />
+      <InteractiveTerminal onNavigate={navigate} latestReleaseUrl={latestRelease.url} />
 
       {/* Audio visualizer */}
       <div className="visualizer-wrap">

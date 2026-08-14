@@ -677,6 +677,17 @@ body {
 
 .beats-view h2 { font-size: 20px; font-weight: 800; margin-bottom: 6px; }
 .beats-desc { font-size: 13px; color: var(--text-secondary); margin-bottom: 16px; }
+.beatstars-player {
+  margin-bottom: 18px;
+}
+.beatstars-player iframe {
+  display: block;
+  width: 100%;
+  min-height: 360px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: #0a0a09;
+}
 .beat-player {
   border-radius: var(--radius-sm);
   overflow: hidden;
@@ -685,6 +696,11 @@ body {
 }
 .beats-cta { display: flex; gap: 10px; }
 .beats-cta .app-store-btn { flex: 1; text-align: center; }
+
+@media (max-width: 640px) {
+  .beatstars-player iframe { height: 520px; }
+  .beats-cta { flex-direction: column; }
+}
 
 /* ═══════════════ About View ═══════════════ */
 .about-header {

@@ -18,6 +18,7 @@
     "resources:seed": "node scripts/seed-resources.mjs",
     "resources:seed:lucid": "node scripts/seed-lucid-midi.mjs",
     "resources:seed:oneshot": "node scripts/seed-original-oneshot.mjs",
+    "resources:seed:thx-bass": "node scripts/seed-thx-bass-preset.mjs",
     "resources:backfill-midi-previews": "node scripts/backfill-midi-previews.mjs",
     "security:refresh-disposable-emails": "node scripts/refresh-disposable-email-domains.mjs",
     "cleanup:expired": "node scripts/cleanup-expired.mjs"
