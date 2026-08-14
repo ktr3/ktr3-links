@@ -60,6 +60,11 @@ test("production image includes the database client required by maintenance scri
   );
 });
 
+test("production exposes an admin image target with complete maintenance dependencies", async () => {
+  const dockerfile = await readFile(new URL("../Dockerfile", import.meta.url), "utf8");
+  assert.match(dockerfile, /FROM dependencies AS admin\s+COPY \. \./);
+});
+
 test("backup uses restrictive permissions, a validated custom dump and the production volume", async () => {
   const script = await readFile(new URL("../scripts/backup-resources.sh", import.meta.url), "utf8");
   assert.match(script, /umask 077/);
