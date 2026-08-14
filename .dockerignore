@@ -15,4 +15,5 @@ task_plan.md
 *.log
 .data
 backups
+private
 public/gipuzkoa-underground.png
