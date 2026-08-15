@@ -61,6 +61,7 @@ test("resource input rejects invalid categories and undersized copy", () => {
 
 test("download validation accepts production files and rejects executables", () => {
   assert.equal(validateUploadName("Bass.SerumPreset", "download").extension, ".serumpreset");
+  assert.equal(validateUploadName("Vocal Preset @ktr3ss.fst", "download").extension, ".fst");
   assert.equal(validateUploadName("melodia.mid", "download").extension, ".mid");
   assert.throws(() => validateUploadName("plugin.dll", "download"), /not allowed/i);
   assert.throws(() => validateUploadName("../preset.fxp", "download"), /filename/i);
@@ -83,6 +84,22 @@ test("known production formats must match their magic bytes", () => {
     "cover.png",
     "cover",
   ));
+  const fst = Buffer.alloc(18);
+  fst.write("FLhd", 0, "ascii");
+  fst.writeUInt32LE(6, 4);
+  fst.writeUInt16LE(0x40, 8);
+  fst.write("FLdt", 14, "ascii");
+  assert.doesNotThrow(() => validateFileBytes(fst, "Vocal Preset.fst", "download"));
+  const renamedProject = Buffer.from(fst);
+  renamedProject.writeUInt16LE(0, 8);
+  assert.throws(
+    () => validateFileBytes(renamedProject, "Renamed Project.fst", "download"),
+    /signature/i,
+  );
+  assert.throws(
+    () => validateFileBytes(Buffer.from("FLhd renamed project"), "Vocal Preset.fst", "download"),
+    /signature/i,
+  );
 });
 
 test("tag parsing is deterministic and bounded", () => {

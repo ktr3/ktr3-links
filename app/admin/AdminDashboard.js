@@ -141,13 +141,13 @@ function ResourceForm({ editing, onSaved, onCancel }) {
         <div className={styles.fileField}>
           <label htmlFor="resource-download">
             Archivo descargable {!editing && "*"}
-            <span>.fxp, .SerumPreset, .mid, .zip, .flp o .wav · máximo 250 MB</span>
+            <span>.fxp, .SerumPreset, .fst, .mid, .zip, .flp o .wav · máximo 250 MB</span>
           </label>
           <input
             id="resource-download"
             name="download"
             type="file"
-            accept=".fxp,.SerumPreset,.mid,.midi,.zip,.flp,.wav"
+            accept=".fxp,.SerumPreset,.fst,.mid,.midi,.zip,.flp,.wav"
             required={!editing}
           />
           {editing?.fileName && <small>Actual: {editing.fileName} · {formatBytes(editing.fileSize)}</small>}
