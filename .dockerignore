@@ -13,4 +13,7 @@ task_plan.md
 *.dump
 *.dump.gz
 *.log
+.data
+backups
+private
 public/gipuzkoa-underground.png

@@ -13,3 +13,10 @@ public/gipuzkoa-underground.png
 *.dump
 *.dump.gz
 *.log
+.data/
+backups/
+tools/serum-lab/input/
+tools/serum-lab/work/
+tools/serum-lab/output/
+tools/midi-lab/work/
+tools/midi-lab/output/

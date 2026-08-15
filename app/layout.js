@@ -1,11 +1,12 @@
 import "./globals.css";
+import AnalyticsConsent from "./analytics/AnalyticsConsent.js";
 
 const SITE_URL = "https://ktr3.es";
 
 export const metadata = {
   title: "Ktr3 — Productor Musical | Beats & Links",
   description:
-    "Productor musical. Escucha mis beats, sígueme en redes y contacta conmigo.",
+    "Productor musical. Beats, presets de Serum, MIDI, plantillas y recursos para productores.",
   metadataBase: new URL(SITE_URL),
   openGraph: {
     type: "website",
@@ -13,7 +14,7 @@ export const metadata = {
     url: SITE_URL,
     siteName: "Ktr3",
     title: "Ktr3 — Productor Musical",
-    description: "Beats, redes sociales y contacto. Todo en un solo lugar.",
+    description: "Beats, presets de Serum, MIDI, plantillas y recursos para productores.",
     images: [
       {
         url: "/og-image.png",
@@ -26,7 +27,7 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Ktr3 — Productor Musical",
-    description: "Beats, redes sociales y contacto.",
+    description: "Beats, presets de Serum, MIDI y recursos para productores.",
     images: ["/og-image.png"],
   },
   icons: { icon: "/favicon.png" },
@@ -57,16 +58,15 @@ export default function RootLayout({ children }) {
     <html lang="es">
       <head>
         <link rel="icon" href="/favicon.png" type="image/png" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
-          rel="stylesheet"
-        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body>{children}</body>
+      <body>
+        {children}
+        <AnalyticsConsent />
+      </body>
     </html>
   );
 }
